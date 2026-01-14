@@ -120,14 +120,15 @@ class MCPClientManager:
                 # Convert configs to langchain format
                 server_configs = self.convert_configs_to_langchain_format()
                 logger.info(f"Creating MCP client for {len(server_configs)} server(s)")
-                
+                logger.info(f"MCP server configs: {server_configs}")
+
                 # Initialize the MultiServerMCPClient
                 self._client = MultiServerMCPClient(server_configs)
-                
+
                 return self._client
-                
+
             except Exception as e:
-                logger.error(f"Error creating MCP client: {e}")
+                logger.error(f"Error creating MCP client: {e}", exc_info=True)
                 return None
 
     async def close_client(self):
@@ -160,15 +161,21 @@ class MCPClientManager:
             
         try:
             # Get tools from all servers
+            logger.info("Calling client.get_tools()...")
             all_tools = await client.get_tools()
-            
+            logger.info(f"client.get_tools() returned: {all_tools}")
+
             if all_tools:
                 logger.info(f"Loaded {len(all_tools)} total tools from MCP servers")
+                # Log first few tool names for debugging
+                tool_names = [t.name if hasattr(t, 'name') else str(t) for t in all_tools[:5]]
+                logger.info(f"Tool names (first 5): {tool_names}")
                 return all_tools
             else:
                 logger.warning("No tools available from MCP servers")
+                logger.warning("Possible causes: 1) MCP server failed to start, 2) GITHUB_TOKEN missing/invalid, 3) Server has no tools")
                 return []
-                
+
         except Exception as e:
-            logger.error(f"Error getting MCP tools: {e}")
+            logger.error(f"Error getting MCP tools: {e}", exc_info=True)
             return [] 

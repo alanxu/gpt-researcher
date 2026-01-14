@@ -144,12 +144,15 @@ async def construct_subtopics(
 
         chain = prompt | model | parser
 
-        output = await chain.ainvoke({
+        chain_input = {
             "task": task,
             "data": data,
             "subtopics": subtopics,
             "max_subtopics": config.max_subtopics
-        }, **kwargs)
+        }
+        logging.getLogger('research').info(f"LLM chain input: {chain_input}")
+        output = await chain.ainvoke(chain_input, **kwargs)
+        logging.getLogger('research').info(f"LLM chain output: {output}")
 
         return output
 

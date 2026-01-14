@@ -87,7 +87,9 @@ async def create_chat_completion_with_tools(
         from langchain_core.messages import ToolMessage
         
         # First call to LLM
+        logger.info(f"LLM input: {lc_messages}")
         response = await llm_with_tools.ainvoke(lc_messages)
+        logger.info(f"LLM response: {response}")
         
         # Process tool calls if any were made
         tool_calls_metadata = []
@@ -151,7 +153,9 @@ async def create_chat_completion_with_tools(
             
             # Get final response from LLM after tool execution
             logger.info("Getting final response from LLM after tool execution")
+            logger.info(f"LLM input: {lc_messages}")
             final_response = await llm_with_tools.ainvoke(lc_messages)
+            logger.info(f"LLM response: {final_response}")
             
             # Track costs if callback provided
             if cost_callback:

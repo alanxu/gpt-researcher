@@ -21,7 +21,7 @@ def get_formatted_logger():
 
         # Create a formatter using DefaultFormatter
         formatter = DefaultFormatter(
-            "%(levelprefix)s [%(asctime)s] %(message)s",
+            "%(levelprefix)s [%(asctime)s] %(filename)s:%(lineno)d - %(message)s",
             datefmt="%H:%M:%S"
         )
 

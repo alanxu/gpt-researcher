@@ -8,8 +8,8 @@ logs_dir.mkdir(exist_ok=True)
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s',
     handlers=[
         # File handler for general application logs
         logging.FileHandler('logs/app.log'),

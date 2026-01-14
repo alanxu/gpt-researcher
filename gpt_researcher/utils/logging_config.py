@@ -50,7 +50,7 @@ def setup_research_logging():
     # Configure file handler for research logs
     file_handler = logging.FileHandler(log_file)
     file_handler.setLevel(logging.INFO)
-    file_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+    file_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s'))
     
     # Get research logger and configure it
     research_logger = logging.getLogger('research')
@@ -64,7 +64,7 @@ def setup_research_logging():
     
     # Add stream handler for console output
     console_handler = logging.StreamHandler()
-    console_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+    console_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s'))
     research_logger.addHandler(console_handler)
     
     # Prevent propagation to root logger to avoid duplicate logs

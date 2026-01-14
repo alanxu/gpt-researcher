@@ -2,6 +2,7 @@ import aiofiles
 import asyncio
 import importlib
 import json
+import logging
 import subprocess
 import sys
 import traceback
@@ -9,6 +10,8 @@ from typing import Any
 from colorama import Fore, Style, init
 import os
 from enum import Enum
+
+logger = logging.getLogger('research')
 
 _SUPPORTED_PROVIDERS = {
     "openai",
@@ -258,6 +261,8 @@ class GenericLLMProvider:
         if not stream:
             # Getting output from the model chain using ainvoke for asynchronous invoking
             output = await self.llm.ainvoke(messages, **kwargs)
+            logger.info(f"LLM input: {messages}")
+            logger.info(f"LLM response: {output}")
 
             res = output.content
 

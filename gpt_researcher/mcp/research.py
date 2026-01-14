@@ -76,7 +76,9 @@ class MCPResearchSkill:
             
             # Invoke LLM with tools
             logger.info("LLM researching with bound tools...")
+            logger.info(f"LLM input: {messages}")
             response = await llm_with_tools.ainvoke(messages)
+            logger.info(f"LLM response: {response}")
             
             # Process tool calls and results
             research_results = []
@@ -149,6 +151,7 @@ class MCPResearchSkill:
                 logger.info("Added LLM analysis to results")
             
             logger.info(f"Research completed with {len(research_results)} total results")
+            logger.debug(f"{research_results=}")
             return research_results
             
         except Exception as e:

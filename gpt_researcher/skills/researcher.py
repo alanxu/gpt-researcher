@@ -184,6 +184,7 @@ class ResearchConductor:
                 self.json_handler.update_content("costs", self.researcher.get_costs())
                 self.json_handler.update_content("context", self.researcher.context)
 
+        # self.logger.info(f"Research completed. Context size: {len(str(self.researcher.context))}, Context: {self.researcher.context}")
         self.logger.info(f"Research completed. Context size: {len(str(self.researcher.context))}")
         return self.researcher.context
 
