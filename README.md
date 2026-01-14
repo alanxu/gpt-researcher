@@ -116,6 +116,155 @@ Visit [http://localhost:8000](http://localhost:8000) to start.
 
 For other setups (e.g., Poetry or virtual environments), check the [Getting Started page](https://docs.gptr.dev/docs/gpt-researcher/getting-started).
 
+### Setup with uv (Recommended)
+
+[uv](https://github.com/astral-sh/uv) is a fast Python package installer and resolver. It's significantly faster than pip and handles dependency conflicts better.
+
+1. **Install uv** (if not already installed):
+
+    ```bash
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    ```
+
+2. **Clone the project**:
+
+    ```bash
+    git clone https://github.com/assafelovic/gpt-researcher.git
+    cd gpt-researcher
+    ```
+
+3. **Create virtual environment and install dependencies**:
+
+    ```bash
+    uv sync
+    ```
+
+    This will automatically:
+    - Create a `.venv` virtual environment
+    - Install all dependencies from `pyproject.toml`
+    - Generate a `uv.lock` file
+
+4. **Set up environment variables**:
+
+    ```bash
+    cp .env.example .env
+    # Edit .env with your API keys
+    ```
+
+    Required API keys:
+    - `OPENAI_API_KEY` - Get from [OpenAI Platform](https://platform.openai.com/api-keys)
+    - `TAVILY_API_KEY` - Get from [Tavily](https://tavily.com) (for web search)
+
+5. **Run the application**:
+
+    ```bash
+    # Run with uv (recommended - uses project's venv automatically)
+    uv run python main.py
+
+    # Or activate venv and run directly
+    source .venv/bin/activate
+    python main.py
+    ```
+
+6. Visit [http://localhost:8000](http://localhost:8000) to start researching.
+
+#### Troubleshooting uv Setup
+
+**Dependency conflicts**: If you encounter dependency resolution errors, try:
+```bash
+rm uv.lock
+uv sync
+```
+
+**langchain-gigachat conflict**: If you see an error about `langchain-gigachat` requiring `langchain-core>=0.3,<0.4`, remove it from `pyproject.toml`:
+
+```bash
+# In pyproject.toml, find and remove this line from [project.optional-dependencies]:
+#     "langchain-gigachat",
+
+# Then re-sync:
+rm uv.lock
+uv sync
+```
+
+This package is only needed for GigaChat (Russian LLM) and conflicts with langchain-core 1.x.
+
+**Adding new packages**:
+```bash
+uv add <package-name>
+```
+
+**Running scripts**:
+```bash
+uv run python <script.py>
+```
+
+### Using OpenRouter or Alternative LLM Providers
+
+You can use OpenRouter to access various LLM providers (including free models) instead of OpenAI directly.
+
+1. **Ensure required dependencies are in `pyproject.toml`**:
+
+    The following dependencies are required for OpenRouter + Google embeddings setup:
+    ```toml
+    # In [tool.poetry.dependencies] section:
+    langchain-google-genai = ">=2.0.0"  # For Google embeddings
+    tavily-python = ">=0.5.0"           # For Tavily search (optional)
+    ```
+
+    These are already included in the default `pyproject.toml`. Run `uv sync` to install them.
+
+2. **Configure your `.env` file**:
+
+    ```bash
+    # OpenRouter Configuration
+    OPENROUTER_API_KEY=your_openrouter_api_key
+    FAST_LLM=openrouter:google/gemini-2.0-flash-lite-001
+    SMART_LLM=openrouter:google/gemini-2.0-flash-001
+    STRATEGIC_LLM=openrouter:openai/gpt-4o-mini
+    OPENROUTER_LIMIT_RPS=1  # Rate limit requests per second
+
+    # Embeddings (OpenRouter doesn't support embeddings, use Google's free API)
+    EMBEDDING=google_genai:models/text-embedding-004
+    GOOGLE_API_KEY=your_google_api_key  # Get free at https://aistudio.google.com/app/apikey
+
+    # Web Search (use free DuckDuckGo if you don't have Tavily)
+    RETRIEVER=duckduckgo
+    ```
+
+3. **Install dependencies**:
+
+    ```bash
+    uv sync  # Installs all dependencies from pyproject.toml
+    ```
+
+    **Important:** If `uv sync` doesn't install all packages (e.g., `langchain_google_genai` not found), install them directly:
+
+    ```bash
+    uv add langchain-google-genai tavily-python
+    ```
+
+4. **For PDF export**, install system dependencies (macOS):
+
+    ```bash
+    brew install glib pango
+    ```
+
+### Free Tier Setup (No API Keys Required for Basic Use)
+
+For a completely free setup using DuckDuckGo search and free LLM models:
+
+```bash
+# .env configuration
+RETRIEVER=duckduckgo
+FAST_LLM=openrouter:google/gemini-2.0-flash-lite-001
+SMART_LLM=openrouter:google/gemini-2.0-flash-001
+STRATEGIC_LLM=openrouter:openai/gpt-4o-mini:free
+OPENROUTER_API_KEY=your_openrouter_key  # Free tier at https://openrouter.ai
+EMBEDDING=google_genai:models/text-embedding-004
+GOOGLE_API_KEY=your_google_key  # Free tier at https://aistudio.google.com/app/apikey
+```
+
 ## Run as PIP package
 ```bash
 pip install gpt-researcher
