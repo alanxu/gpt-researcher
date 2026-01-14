@@ -289,8 +289,23 @@ report = await researcher.write_report()
 ### 🔧 MCP Client
 GPT Researcher supports MCP integration to connect with specialized data sources like GitHub repositories, databases, and custom APIs. This enables research from data sources alongside web search.
 
+**Prerequisites for MCP:**
+
+Most MCP servers (like GitHub) require Node.js. Install it first:
+
+```bash
+# macOS with Homebrew
+brew install node
+
+# Verify installation
+npx --version
+```
+
+**Setup:**
+
 ```bash
 export RETRIEVER=tavily,mcp  # Enable hybrid web + MCP research
+export GITHUB_TOKEN=your_github_token  # Get from https://github.com/settings/tokens
 ```
 
 ```python
@@ -301,7 +316,7 @@ import os
 async def mcp_research_example():
     # Enable MCP with web search
     os.environ["RETRIEVER"] = "tavily,mcp"
-    
+
     researcher = GPTResearcher(
         query="What are the top open source web research agents?",
         mcp_configs=[
@@ -313,7 +328,7 @@ async def mcp_research_example():
             }
         ]
     )
-    
+
     research_result = await researcher.conduct_research()
     report = await researcher.write_report()
     return report
